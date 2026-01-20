@@ -16,15 +16,17 @@ type CityPopulationResponse struct {
 	Error bool `json:"error"`
 }
 
+var ErrNoCity = errors.New("NOCITY")
+
 func GetMyLocation(city string) (*GeoData, error) {
 	// Если город передан => Используем его
 	if city != "" {
-		if CheckCity(city) {
+		if checkCity(city) {
 			return &GeoData{
 				City: city,
 			}, nil
 		} else {
-			panic("Такого города нет")
+			return nil, ErrNoCity
 		}
 	}
 
@@ -46,7 +48,7 @@ func GetMyLocation(city string) (*GeoData, error) {
 	return &geo, nil
 }
 
-func CheckCity(city string) bool {
+func checkCity(city string) bool {
 	// Создаем объект body для Post-запроса
 	postBody, _ := json.Marshal(map[string]string{"city": city})
 
